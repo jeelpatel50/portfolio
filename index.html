@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JeelKumar Patel | Interactive Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAF9;
+            color: #1C1917;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAFAF9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D6D3D1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #A8A29E;
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+        }
+
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-1 { transition-delay: 100ms; }
+        .stagger-2 { transition-delay: 200ms; }
+        .stagger-3 { transition-delay: 300ms; }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #1C1917 0%, #57534E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cursor-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #EA580C;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s linear;
+            mix-blend-mode: multiply;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orange-100 selection:text-orange-900">
+
+    <div id="cursor" class="cursor-dot hidden md:block"></div>
+
+    <nav class="fixed top-0 w-full z-50 bg-stone-50/80 backdrop-blur-md border-b border-stone-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold tracking-tight text-stone-900 font-serif">JEELP.</a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-stone-600">
+                <a href="#about" class="hover:text-orange-600 transition-colors">About</a>
+                <a href="#experience" class="hover:text-orange-600 transition-colors">Experience</a>
+                <a href="#academics" class="hover:text-orange-600 transition-colors">Academics</a>
+                <a href="#projects" class="hover:text-orange-600 transition-colors">Projects</a>
+                <a href="#certifications" class="hover:text-orange-600 transition-colors">Certifications</a>
+                <a href="#contact" class="hover:text-orange-600 transition-colors">Contact</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-2xl text-stone-800 focus:outline-none">&#9776;</button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-stone-50 border-b border-stone-200">
+            <div class="px-6 py-4 flex flex-col space-y-4">
+                <a href="#about" class="text-stone-600 hover:text-orange-600">About</a>
+                <a href="#experience" class="text-stone-600 hover:text-orange-600">Experience</a>
+                <a href="#academics" class="text-stone-600 hover:text-orange-600">Academics</a>
+                <a href="#projects" class="text-stone-600 hover:text-orange-600">Projects</a>
+                <a href="#certifications" class="text-stone-600 hover:text-orange-600">Certifications</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-orange-50/50 -z-10 rounded-bl-[10rem]"></div>
+        
+        <div class="max-w-5xl mx-auto text-center z-10">
+            <p class="reveal-up text-orange-600 font-medium tracking-widest mb-4 text-sm uppercase">Portfolio & Profile</p>
+            <h1 class="reveal-up stagger-1 text-6xl md:text-8xl font-bold text-stone-900 leading-tight mb-8">
+                Designing <span class="italic font-light text-stone-500">logic</span>,<br>
+                coding <span class="italic font-light text-stone-500">vision</span>.
+            </h1>
+            <p class="reveal-up stagger-2 text-xl text-stone-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+                I am <strong class="text-stone-900">Jeel Patel</strong>, an Computer Science Honours student at York University blending technical precision with creative problem-solving.
+            </p>
+            <div class="reveal-up stagger-3 flex flex-wrap justify-center gap-4">
+                <a href="#projects" class="px-8 py-4 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition-colors duration-300 shadow-lg">View My Work</a>
+                <a href="Resume.pdf" target="_blank" class="px-8 py-4 bg-orange-600 text-white rounded-full font-medium hover:bg-orange-700 transition-colors duration-300 shadow-lg hover:shadow-orange-200">Download Resume</a>
+                <a href="#academics" class="px-8 py-4 bg-white border border-stone-200 text-stone-800 rounded-full font-medium hover:bg-stone-50 transition-colors duration-300">See Grades</a>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-stone-400">&#8595;</div>
+    </header>
+
+    <section id="about" class="py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="reveal-up relative">
+                <div class="aspect-square bg-stone-100 rounded-2xl overflow-hidden relative">
+                    <div class="absolute inset-0 flex items-center justify-center bg-stone-200 text-stone-400 text-6xl">&#128100;</div>
+                </div>
+                <div class="absolute -bottom-6 -right-6 bg-white p-6 shadow-xl rounded-xl border border-stone-100 max-w-xs">
+                    <div class="text-orange-600 text-4xl font-serif mb-2">&ldquo;</div>
+                    <p class="text-stone-600 text-sm italic">Passionate about full-stack development, data analysis, and building efficient solutions.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-1">
+                <h2 class="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-serif">The Person Behind the Code</h2>
+                <div class="space-y-4 text-stone-600 text-lg leading-relaxed">
+                    <p>
+                        Education is more than just grades; it's the foundation of critical thinking. As a <strong>BSc Honours Computer Science</strong> student at York University, I explore the intersection of data, technology, and robust software architecture.
+                    </p>
+                    <p>
+                        My journey involves turning complex requirements into elegant, user-friendly applications. From forecasting geographic data using kNN models to managing deployment infrastructure, I apply an agile, data-driven mindset to every project.
+                    </p>
+                </div>
+                
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-stone-50 rounded-lg border border-stone-100">
+                        <div class="text-3xl mb-2">&#128187;</div>
+                        <h3 class="font-bold text-stone-900">Developer</h3>
+                        <p class="text-sm text-stone-500">Python, Java, JavaScript</p>
+                    </div>
+                    <div class="p-4 bg-stone-50 rounded-lg border border-stone-100">
+                        <div class="text-3xl mb-2">&#127757;</div>
+                        <h3 class="font-bold text-stone-900">Analyst</h3>
+                        <p class="text-sm text-stone-500">Data &amp; Requirements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="py-24 px-6 bg-stone-50 border-t border-stone-200">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16 reveal-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-stone-900 mb-4 font-serif">Professional Experience</h2>
+                <p class="text-stone-600 text-lg">Leadership and operational roles that honed my communication and analytical skills.</p>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-1">
+                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-stone-800">Orientation Leader</h3>
+                            <p class="text-orange-600 font-medium">York University (Lassonde WeekZero)</p>
+                        </div>
+                        <span class="text-stone-500 text-sm mt-2 md:mt-0 bg-stone-100 px-3 py-1 rounded-full w-max">Summer 2025</span>
+                    </div>
+                    <ul class="list-disc list-inside text-stone-600 space-y-2 mt-4">
+                        <li>Acted as a primary contact for new students, delivering presentations and facilitating group discussions.</li>
+                        <li>Coordinated logistics for campus events, ensuring schedules and resources were allocated effectively.</li>
+                        <li>Worked closely with student leaders to maintain clear communication between technical teams and administration.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-2">
+                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-stone-800">Distribution & Customer Service Assistant</h3>
+                            <p class="text-orange-600 font-medium">York University Bookstore</p>
+                        </div>
+                        <span class="text-stone-500 text-sm mt-2 md:mt-0 bg-stone-100 px-3 py-1 rounded-full w-max">Aug 2024 - Sep 2024</span>
+                    </div>
+                    <ul class="list-disc list-inside text-stone-600 space-y-2 mt-4">
+                        <li>Managed inventory tracking and conducted data validation checks on incoming shipments.</li>
+                        <li>Collaborated with a team to handle order fulfillment and customer inquiries during high-traffic periods.</li>
+                        <li>Used analytical thinking to identify and resolve discrepancies in shipment logs and inventory records.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="academics" class="py-24 px-6 bg-white border-t border-stone-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-stone-900 mb-4 font-serif">Academic Performance</h2>
+                <p class="text-stone-600 text-lg">
+                    A quantitative look at my coursework, technical competencies, and official grades from York University.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 mb-16">
+                <div class="bg-stone-50 p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-stone-800">Top Course Performance</h3>
+                        <span class="text-xs font-semibold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Interactive</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gradesChart"></canvas>
+                    </div>
+                    <div id="grade-detail" class="mt-6 p-4 bg-white rounded-lg text-sm text-stone-600 border-l-4 border-orange-500 transition-all opacity-0">
+                        <span class="font-bold block text-stone-900 text-base" id="detail-course">Course Name</span>
+                        <span id="detail-desc">Hover over a bar to see course details.</span>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-stone-800">Technical Matrix</h3>
+                        <span class="text-xs font-semibold bg-white text-stone-700 border border-stone-200 px-3 py-1 rounded-full">Skillset</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div class="mt-6 text-center text-sm text-stone-500 flex flex-wrap justify-center gap-2">
+                        <span class="bg-stone-200 px-2 py-1 rounded text-xs">Python</span>
+                        <span class="bg-stone-200 px-2 py-1 rounded text-xs">Java</span>
+                        <span class="bg-stone-200 px-2 py-1 rounded text-xs">SQL</span>
+                        <span class="bg-stone-200 px-2 py-1 rounded text-xs">HTML/CSS/JS</span>
+                        <span class="bg-stone-200 px-2 py-1 rounded text-xs">MS Azure</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal-up bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-stone-800">Official Transcript & Grades</h3>
+                    <span class="text-xs font-semibold bg-green-100 text-green-700 px-3 py-1 rounded-full">Verified Data</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-stone-600">
+                        <thead class="bg-stone-50 text-stone-900 border-b border-stone-200">
+                            <tr>
+                                <th class="p-4 rounded-tl-lg font-semibold">Course Code</th>
+                                <th class="p-4 font-semibold">Course Title</th>
+                                <th class="p-4 font-semibold">Term</th>
+                                <th class="p-4 rounded-tr-lg font-semibold text-right">Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 2031</td>
+                                <td class="p-4">Software Tools</td>
+                                <td class="p-4 text-stone-400">SU24</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">A+</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 3101</td>
+                                <td class="p-4">Design and Analysis of Algorithms</td>
+                                <td class="p-4 text-stone-400">SU25</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">A</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">VISA 1006</td>
+                                <td class="p-4">The Photographic Experience</td>
+                                <td class="p-4 text-stone-400">SU25</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">A</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 3311</td>
+                                <td class="p-4">Software Design</td>
+                                <td class="p-4 text-stone-400">FW25</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">B+</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 2030</td>
+                                <td class="p-4">Advanced Object Oriented Programming</td>
+                                <td class="p-4 text-stone-400">FW24</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">B+</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 2021</td>
+                                <td class="p-4">Computer Organization</td>
+                                <td class="p-4 text-stone-400">SU24</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">B+</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 3421</td>
+                                <td class="p-4">Introduction to Database Systems</td>
+                                <td class="p-4 text-stone-400">SU25</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">B</td>
+                            </tr>
+                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                                <td class="p-4 font-medium">EECS 4414</td>
+                                <td class="p-4">Information Networks</td>
+                                <td class="p-4 text-stone-400">FW25</td>
+                                <td class="p-4 font-bold text-stone-900 text-right">B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="py-24 px-6 bg-stone-50 relative border-t border-stone-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal-up">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-stone-900 font-serif mb-4">Curated Projects</h2>
+                    <p class="text-stone-600 max-w-md">Selected works demonstrating coding proficiency and analytical problem solving.</p>
+                </div>
+                <div class="flex space-x-2 mt-6 md:mt-0" id="project-filters">
+                    <button class="filter-btn active px-4 py-2 rounded-full text-sm font-medium transition-all bg-stone-900 text-white" data-filter="all">All</button>
+                    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-stone-100 text-stone-600 hover:bg-stone-200" data-filter="web">Web / App</button>
+                    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-stone-100 text-stone-600 hover:bg-stone-200" data-filter="python">Data / Logic</button>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+                
+                <article class="project-card group cursor-pointer" data-category="web">
+                    <div class="relative overflow-hidden rounded-xl bg-white aspect-[4/3] mb-4 border border-stone-100">
+                        <div class="absolute inset-0 bg-stone-50 group-hover:bg-stone-100 transition-colors duration-500 flex items-center justify-center text-5xl opacity-30">&#128214;</div>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-white/90 backdrop-blur text-stone-800 text-xs font-bold px-2 py-1 rounded shadow-sm">MS Azure / Node.js</span>
+                        </div>
+                    </div>
+                    <div class="reveal-up">
+                        <h3 class="text-xl font-bold text-stone-900 group-hover:text-orange-600 transition-colors">Novel Tracker</h3>
+                        <p class="text-stone-500 text-sm mt-2 mb-4">Cloud-integrated tool to manage and automate the extraction of light novels, converting them into EPUB format for offline reading.</p>
+                        <div class="flex flex-wrap gap-2 text-xs font-semibold text-stone-400">
+                            <span>LNCrawler</span> &bull; <span>Puppeteer</span> &bull; <span>Vercel</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card group cursor-pointer" data-category="python">
+                    <div class="relative overflow-hidden rounded-xl bg-white aspect-[4/3] mb-4 border border-stone-100">
+                        <div class="absolute inset-0 bg-stone-50 group-hover:bg-stone-100 transition-colors duration-500 flex items-center justify-center text-5xl opacity-30">&#127784;</div>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-white/90 backdrop-blur text-stone-800 text-xs font-bold px-2 py-1 rounded shadow-sm">Python / ML</span>
+                        </div>
+                    </div>
+                    <div class="reveal-up stagger-1">
+                        <h3 class="text-xl font-bold text-stone-900 group-hover:text-orange-600 transition-colors">Snowfall Data Analysis</h3>
+                        <p class="text-stone-500 text-sm mt-2 mb-4">Long-term analysis of Canadian snowfall patterns (1920-2020) using CanSWE datasets, featuring kNN graphs and Linear Regression models.</p>
+                        <div class="flex flex-wrap gap-2 text-xs font-semibold text-stone-400">
+                            <span>Pandas</span> &bull; <span>kNN</span> &bull; <span>Matplotlib</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card group cursor-pointer" data-category="web">
+                    <div class="relative overflow-hidden rounded-xl bg-white aspect-[4/3] mb-4 border border-stone-100">
+                        <div class="absolute inset-0 bg-stone-50 group-hover:bg-stone-100 transition-colors duration-500 flex items-center justify-center text-5xl opacity-30">&#128188;</div>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-white/90 backdrop-blur text-stone-800 text-xs font-bold px-2 py-1 rounded shadow-sm">Agile / QA</span>
+                        </div>
+                    </div>
+                    <div class="reveal-up stagger-2">
+                        <h3 class="text-xl font-bold text-stone-900 group-hover:text-orange-600 transition-colors">Marketplace App</h3>
+                        <p class="text-stone-500 text-sm mt-2 mb-4">Served as Lead Business Analyst. Documented 20+ functional requirements, maintained RTM, and executed comprehensive QA testing.</p>
+                        <div class="flex flex-wrap gap-2 text-xs font-semibold text-stone-400">
+                            <span>Scrum</span> &bull; <span>Requirements</span> &bull; <span>Validation</span>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="certifications" class="py-24 px-6 bg-white border-t border-stone-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-stone-900 mb-4 font-serif">Certifications</h2>
+                <p class="text-stone-600 text-lg">Continuous learning and professional development.</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                
+                <div class="bg-stone-50 p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-start mb-4 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800">Microsoft Security Essentials Professional Certificate</h3>
+                                <p class="text-orange-600 font-medium mt-1">Microsoft & LinkedIn</p>
+                            </div>
+                            <span class="text-stone-500 text-xs font-semibold bg-white border border-stone-200 px-3 py-1 rounded-full whitespace-nowrap h-max">Feb 2026</span>
+                        </div>
+                        <p class="text-stone-600 text-sm mt-4"><strong class="text-stone-800">Skills:</strong> Security Governance, Risk Management, Compliance (GRC), Cloud Security</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-stone-200">
+                        <a href="https://www.linkedin.com/learning/certificates/da5f1a0523c8bf4a370dddadfbdfbdb0156004d74f77c0f5988a40a5c4762b10?trk=share_certificate" target="_blank" class="inline-flex items-center text-sm font-semibold text-stone-900 hover:text-orange-600 transition-colors group">
+                            Verify Credential 
+                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-2 flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-start mb-4 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800">Practical GitHub Actions</h3>
+                                <p class="text-orange-600 font-medium mt-1">LinkedIn Learning</p>
+                            </div>
+                            <span class="text-stone-500 text-xs font-semibold bg-white border border-stone-200 px-3 py-1 rounded-full whitespace-nowrap h-max">Feb 2026</span>
+                        </div>
+                        <p class="text-stone-600 text-sm mt-4"><strong class="text-stone-800">Skills:</strong> GitHub Actions, Workflows, Automation</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-stone-200">
+                        <a href="https://www.linkedin.com/learning/certificates/9c2f6bf29cb4648302945806eca7b120d422d3f548d923629182a1692c0d9409?trk=share_certificate" target="_blank" class="inline-flex items-center text-sm font-semibold text-stone-900 hover:text-orange-600 transition-colors group">
+                            Verify Credential 
+                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 p-8 rounded-2xl shadow-sm border border-stone-100 reveal-up stagger-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-start mb-4 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800">Career Essentials in GitHub Professional Certificate</h3>
+                                <p class="text-orange-600 font-medium mt-1">GitHub & LinkedIn</p>
+                            </div>
+                            <span class="text-stone-500 text-xs font-semibold bg-white border border-stone-200 px-3 py-1 rounded-full whitespace-nowrap h-max">Feb 2026</span>
+                        </div>
+                        <p class="text-stone-600 text-sm mt-4"><strong class="text-stone-800">Status:</strong> Professional Certificate</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-stone-200">
+                        <a href="#" target="_blank" class="inline-flex items-center text-sm font-semibold text-stone-900 hover:text-orange-600 transition-colors group">
+                            Verify Credential 
+                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="bg-stone-900 text-stone-400 py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-serif text-white mb-8 reveal-up">Let's build something together.</h2>
+            <p class="mb-12 text-lg reveal-up stagger-1">Open to software engineering, data analysis, and technical roles.</p>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-6 reveal-up stagger-2">
+                <a href="mailto:jeelpatel50.jp@gmail.com" class="inline-block px-10 py-5 bg-orange-600 text-white font-bold rounded-full hover:bg-orange-700 transition-transform hover:-translate-y-1 duration-300">
+                    Email Me
+                </a>
+                <a href="Resume (3).pdf" download class="inline-block px-10 py-5 bg-stone-800 text-white font-bold rounded-full hover:bg-stone-700 transition-transform hover:-translate-y-1 duration-300 border border-stone-700">
+                    Get Resume PDF
+                </a>
+            </div>
+
+            <div class="mt-20 pt-10 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center text-sm">
+                <p>&copy; 2026 JeelKumar Patel. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="https://github.com/jeelpatel50" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+                    <a href="https://linkedin.com/in/jeelkumar-patel" target="_blank" class="hover:text-white transition-colors">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const appState = {
+            currentFilter: 'all',
+            chartInstanceGrades: null,
+            chartInstanceSkills: null,
+            gradeData: {
+                labels: ['EECS 2031', 'EECS 3101', 'EECS 3311', 'EECS 2021'],
+                data: [95, 90, 80, 80],
+                descriptions: [
+                    'Software Tools: Grade A+. Mastery of core development environments and C.',
+                    'Design and Analysis of Algorithms: Grade A. Advanced algorithmic theory.',
+                    'Software Design: Grade B+. Architectural patterns and robust engineering.',
+                    'Computer Organization: Grade B+. Hardware architecture basics.'
+                ]
+            }
+        };
+
+        function initCharts() {
+            const ctxGrades = document.getElementById('gradesChart').getContext('2d');
+            appState.chartInstanceGrades = new Chart(ctxGrades, {
+                type: 'bar',
+                data: {
+                    labels: appState.gradeData.labels,
+                    datasets: [{
+                        label: 'Estimated Score',
+                        data: appState.gradeData.data,
+                        backgroundColor: [
+                            'rgba(234, 88, 12, 0.8)',
+                            'rgba(68, 64, 60, 0.6)',
+                            'rgba(68, 64, 60, 0.6)',
+                            'rgba(68, 64, 60, 0.6)'
+                        ],
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1C1917',
+                            padding: 12,
+                            titleFont: { family: 'Inter', size: 14 },
+                            bodyFont: { family: 'Inter', size: 13 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#F5F5F4' },
+                            ticks: { font: { family: 'Inter' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter' } }
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        const detailBox = document.getElementById('grade-detail');
+                        const courseName = document.getElementById('detail-course');
+                        const courseDesc = document.getElementById('detail-desc');
+                        
+                        if (elements && elements.length > 0) {
+                            const index = elements[0].index;
+                            courseName.textContent = appState.gradeData.labels[index];
+                            courseDesc.textContent = appState.gradeData.descriptions[index];
+                            detailBox.style.opacity = '1';
+                        }
+                    }
+                }
+            });
+
+            const ctxSkills = document.getElementById('skillsChart').getContext('2d');
+            appState.chartInstanceSkills = new Chart(ctxSkills, {
+                type: 'radar',
+                data: {
+                    labels: ['Python', 'Java', 'SQL / Databases', 'Web Development', 'Data Analysis'],
+                    datasets: [{
+                        label: 'Proficiency',
+                        data: [90, 85, 80, 85, 88],
+                        fill: true,
+                        backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                        borderColor: 'rgba(234, 88, 12, 1)',
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#EA580C',
+                        pointHoverBackgroundColor: '#EA580C',
+                        pointHoverBorderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E7E5E4' },
+                            grid: { color: '#E7E5E4' },
+                            pointLabels: { font: { size: 12, family: 'Inter', weight: '600' }, color: '#44403C' },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+            document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+        }
+
+        function initProjectFilter() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            const projects = document.querySelectorAll('.project-card');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => {
+                        b.classList.remove('bg-stone-900', 'text-white');
+                        b.classList.add('bg-stone-100', 'text-stone-600');
+                    });
+                    btn.classList.remove('bg-stone-100', 'text-stone-600');
+                    btn.classList.add('bg-stone-900', 'text-white');
+
+                    const filter = btn.getAttribute('data-filter');
+                    projects.forEach(project => {
+                        const category = project.getAttribute('data-category');
+                        if (filter === 'all' || category === filter) {
+                            project.style.display = 'block';
+                            setTimeout(() => {
+                                project.style.opacity = '1';
+                                project.style.transform = 'scale(1)';
+                            }, 50);
+                        } else {
+                            project.style.opacity = '0';
+                            project.style.transform = 'scale(0.95)';
+                            setTimeout(() => { project.style.display = 'none'; }, 300);
+                        }
+                    });
+                });
+            });
+        }
+
+        function initCursor() {
+            const cursor = document.getElementById('cursor');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            const hoverables = document.querySelectorAll('a, button');
+            hoverables.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                    cursor.style.opacity = '0.5';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursor.style.opacity = '1';
+                });
+            });
+        }
+
+        function initMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => { menu.classList.toggle('hidden'); });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            initScrollAnimations();
+            initProjectFilter();
+            initCursor();
+            initMobileMenu();
+        });
+    </script>
+</body>
+</html>
